@@ -90,3 +90,9 @@ def connected_examples_to_object(examples: Examples, path: Path, o: Object) -> S
 def connected_objects(examples: Examples, path: Path) -> Set[Object]:
     pd: PathData = _load_or_compute(path, examples)
     return set(pd.examples_to_object.keys())
+
+def remove(p: Path) -> None:
+    try:
+        del cache[p]
+    except:
+        pass

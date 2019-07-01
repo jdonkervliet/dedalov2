@@ -133,6 +133,7 @@ def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPru
                     if exp.record is not None and exp.record.score > minimum_score:
                         logging.debug("ROUND: {} {}".format(round_number, exp.record))
             paths.pop(best_path, None)
+            path_data.remove(best_path)
 
             round_duration = time.time() - round_start
             exceeded, num_bytes = mem_limit_exceeded(process, memlimit)
