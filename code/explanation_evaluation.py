@@ -2,7 +2,6 @@
 import bisect
 from typing import Collection, Set, Tuple
 
-import path_data
 from example import Example, Examples
 from explanation import Explanation, Record
 from knowledge_graph import Subject
@@ -53,7 +52,7 @@ def fuzzy_f_measure(e: Explanation, examples: Examples) -> float:
     return _fuzzy_f_measure(e.explains(examples), examples)
 
 def max_fuzzy_f_measure(p: Path, examples: Examples) -> float:
-    return _fuzzy_f_measure(set(e for e in path_data.connected_examples(examples, p) if e.positive), examples)
+    return _fuzzy_f_measure(set(e for e in examples if e.subject in p.starting_points()), examples)
 
 def _fuzzy_f_measure(roots: Set[Example], examples: Examples) -> float:
     ftp_value, ffp_value, ffn_value = _tfpn_roots_positives(roots, set(examples.positives))

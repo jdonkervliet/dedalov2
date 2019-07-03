@@ -16,7 +16,6 @@ import psutil
 import explanation_evaluation
 import knowledge_graph
 import local_hdt
-import path_data
 import path_evaluation
 import path_pruner
 import urishortener
@@ -85,9 +84,7 @@ def main(example_file: str, output_file: str, hdt_file: str, heuristic: str, gro
 
     mp: MemoryProfiler = profiler(mem_profile)
 
-    path_data.init()
     explain(examples, output_file, heuristic, pruner, mp, blacklist=bl, **kwargs)
-    path_data.cleanup()
 
 def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf, rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0, minimum_score: int = -1, memlimit: float = math.inf) -> None:
     """Search for an explanations that explains the given examples.
@@ -133,7 +130,6 @@ def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPru
                     if exp.record is not None and exp.record.score > minimum_score:
                         logging.debug("ROUND: {} {}".format(round_number, exp.record))
             paths.pop(best_path, None)
-            path_data.remove(best_path)
 
             round_duration = time.time() - round_start
             exceeded, num_bytes = mem_limit_exceeded(process, memlimit)
@@ -150,7 +146,7 @@ def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPru
                 best_path = path_evaluation.find_best_path(heuristic, paths, examples, pruner, max_length=complete - 1)
                 if best_path is None:
                     break
-                nodes = knowledge_graph.objects_to_subjects(path_data.connected_objects(examples, best_path))
+                nodes = knowledge_graph.objects_to_subjects(best_path.end_points())
             else:
                 break
 

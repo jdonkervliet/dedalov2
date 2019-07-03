@@ -1,7 +1,6 @@
 
 from typing import Optional, Set
 
-import path_data
 from example import Example, Examples
 from knowledge_graph import Object
 from path import Path
@@ -14,7 +13,7 @@ class Explanation:
         self.record: Optional[Record] = None
 
     def explains(self, examples: Examples) -> Set[Example]:
-        return path_data.connected_examples_to_object(examples, self.path, self.value)
+        return set(example for example in examples if example.subject in self.path.starting_points_connected_to_object(self.value))
 
     def __lt__(self, other):
         return self.path < other.path

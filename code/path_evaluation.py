@@ -3,7 +3,6 @@ import logging
 import math
 from typing import Callable, Dict, List, Optional, Collection, Set
 
-import path_data
 from example import Example, Examples
 from explanation import Explanation
 from knowledge_graph import Subject
@@ -60,8 +59,8 @@ def entropy(p: Path, examples: Examples) -> float:
         float -- A numerical value representing the quality of the path. Higher is better.
     """
     res: float = 0
-    for obj in path_data.connected_objects(examples, p):
-        num_roots = len(path_data.connected_examples_to_object(examples, p, obj))
+    for obj in p.end_points():
+        num_roots = len(set(e for e in examples if e.subject in p.starting_points_connected_to_object(obj)))
         frac = num_roots/len(examples)
         assert frac >= 0
         assert frac <= 1
