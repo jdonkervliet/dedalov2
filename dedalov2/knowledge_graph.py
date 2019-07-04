@@ -1,8 +1,4 @@
 
-import logging
-from typing import Callable, Collection, Deque, Iterable, Set, Sequence, Tuple
-
-import collections
 import hdt
 import local_hdt
 import urishortener

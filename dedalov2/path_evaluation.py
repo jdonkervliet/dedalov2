@@ -1,15 +1,14 @@
 
 import logging
 import math
-from typing import Callable, Dict, List, Optional, Collection, Set
+from typing import Callable, Dict, Optional, Set
 
-from example import Example, Examples
-from explanation import Explanation
+from example import Examples
 from path import Path
 from path_pruner import PathPruner
 
 
-def find_best_path(heuristic: str, paths: Dict[Path,Path], examples: Examples, pruner: PathPruner, max_length: float = float('inf')) -> Optional[Path]:
+def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, pruner: PathPruner, max_length: float = float('inf')) -> Optional[Path]:
     """Get the best path from a collection of paths.
     
     Arguments:
@@ -47,6 +46,7 @@ def find_best_path(heuristic: str, paths: Dict[Path,Path], examples: Examples, p
     logging.info("NEXT ROUND HAS {} REMAINING PATHS".format(len(paths)))
     return res
 
+
 def entropy(p: Path, examples: Examples) -> float:
     """Metric to calculate the quality of a path. A good path should lead to good explanations.
     
@@ -66,8 +66,10 @@ def entropy(p: Path, examples: Examples) -> float:
         res -= frac * math.log10(frac)
     return res
 
+
 def shortest_path(p: Path, examples: Examples) -> float:
     return -float(len(p))
+
 
 def longest_path(p: Path, examples: Examples) -> float:
     return float(len(p))
@@ -88,11 +90,14 @@ def longest_path(p: Path, examples: Examples) -> float:
 #         res += evaluate_explanation(e, examples)
 #     return res
 
-HEURISTIC_NAMES: Dict[str, Callable[[Path, Examples], float]]  = {
+
+HEURISTIC_NAMES: Dict[str, Callable[[Path, Examples], float]] = {
     "bfs": shortest_path,
     "entropy": entropy,
     "lpf": longest_path,
 }
+
+
 def get_heuristic_from_string(name: str) -> Callable[[Path, Examples], float]:
     assert name in HEURISTIC_NAMES, "Unknown search heuristic: {}.".format(name)
     return HEURISTIC_NAMES[name]

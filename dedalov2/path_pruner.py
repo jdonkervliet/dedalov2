@@ -1,13 +1,12 @@
 
 import logging
-from typing import Callable, Collection, Dict
+from typing import Callable, Collection
 
-import explanation_evaluation
-from example import Example, Examples
-from explanation import Explanation
+from example import Examples
 from path import Path
 
 PathPruner = Callable[[Path], bool]
+
 
 def prune_max_path_score(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
     def p(p: Path) -> bool:
@@ -19,6 +18,7 @@ def prune_max_path_score(explanation_evaluation_func: Callable[[Path, Examples],
             return True
         return False
     return p
+
 
 def prune_multi_pruner(pruners: Collection[PathPruner], examples: Examples) -> PathPruner:
     def p(p: Path) -> bool:

@@ -1,11 +1,10 @@
 
 import logging
 import os
-from typing import Callable, Collection, Iterator, List, Set
+from typing import Iterator, List
 
-import hdt
-import local_hdt
 from knowledge_graph import Vertex
+
 
 class Example:
 
@@ -26,10 +25,13 @@ class Example:
         return hash(self.vertex) << 1 + (1 if self.positive else 0)
 
     def __eq__(self, other):
-        return isinstance(other, Example) and self.vertex == other.vertex and self.positive == other.positive
+        return isinstance(other, Example) \
+            and self.vertex == other.vertex \
+            and self.positive == other.positive
 
     def __str__(self):
         return "{}-{}".format("P" if self.positive else "N", self.vertex)
+
 
 class Examples:
 
@@ -53,7 +55,7 @@ class Examples:
                         first_line = False
                     uri = parts[1]
                     try:
-                        e = Example.fromString(uri, int(group)==int(groupid))
+                        e = Example.fromString(uri, int(group) == int(groupid))
                         examples.add_example(e)
                     except ValueError as err:
                         logging.warning(err)
@@ -62,7 +64,7 @@ class Examples:
         if balance:
             examples.balance()
         if len(examples.positives) <= 0:
-            raise ValueError( "Cannot run program without positive examples.")
+            raise ValueError("Cannot run program without positive examples.")
         return examples
 
     def __init__(self):

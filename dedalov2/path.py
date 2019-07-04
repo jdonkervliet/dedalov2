@@ -1,12 +1,11 @@
 
-import copy
-from typing import Callable, Collection, Dict, List, MutableSet, Optional, Set
+from typing import Dict, Optional, Set
 
 from example import Example, Examples
 from knowledge_graph import Predicate, Vertex
 from linked_list import LinkedNode
 
-# Todo implement Paths class, remove the need to pass 'paths' to extend.
+
 class Path:
 
     @staticmethod

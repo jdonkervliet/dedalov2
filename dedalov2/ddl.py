@@ -9,18 +9,17 @@ import os
 import subprocess
 import sys
 import time
-from typing import Dict, Collection, List, Optional, Sequence, Set, Tuple
+from typing import Dict, Collection, List, Optional, Set, Tuple
 
 import psutil
 
 import explanation_evaluation
-import knowledge_graph
 import local_hdt
 import path_evaluation
 import path_pruner
 import urishortener
 from blacklist import Blacklist
-from example import Example, Examples
+from example import Examples
 from explanation import Explanation
 from knowledge_graph import Predicate, Vertex
 from memory_profiler import MemoryProfiler, profiler
@@ -31,15 +30,20 @@ from path_pruner import PathPruner
 
 def strict_handler(exception):
     return u"", exception.end
+
+
 codecs.register_error("strict", strict_handler)
+
 
 def validate_search_heuristic(heuristic: str) -> None:
     path_evaluation.get_heuristic_from_string(heuristic)
+
 
 def print_examples(examples: Examples) -> None:
     logging.info("Using examples:")
     for e in examples:
         logging.info(e)
+
 
 def print_git_hash() -> None:
     dedalov2_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
@@ -50,6 +54,7 @@ def print_git_hash() -> None:
     else:
         logging.warning("Dedalov2 not located in git repository.")
 
+
 def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, float]:
     membytes = process.memory_info().rss
     if membytes >= memlimit:
@@ -59,8 +64,7 @@ def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, 
             return (True, membytes)
     return (False, membytes)
 
-# TODO check indeterminism for other searches
-# TODO check runtime variation
+
 def main(example_file: str, output_file: str, hdt_file: str, heuristic: str, groupid: str = None, prefix: str = None, blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> None:
     """Search for an explanation given a file of URIs and the groups they belong to.
     
@@ -86,6 +90,7 @@ def main(example_file: str, output_file: str, hdt_file: str, heuristic: str, gro
 
     explain(examples, output_file, heuristic, pruner, mp, blacklist=bl, **kwargs)
 
+
 def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf, rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0, minimum_score: int = -1, memlimit: float = math.inf) -> None:
     """Search for an explanations that explains the given examples.
     
@@ -97,9 +102,9 @@ def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPru
         rounds {float} -- The maximum number of rounds the algorithm will run. (default: {math.inf})
     """
 
-    nodes: Collection[Vertex] = [ example.vertex for example in examples ]
+    nodes: Collection[Vertex] = [example.vertex for example in examples]
 
-    paths: Dict[Path,Path] = dict()
+    paths: Dict[Path, Path] = dict()
     explanations: int = 0
 
     best_path: Optional[Path] = Path.from_examples(examples)
@@ -156,12 +161,12 @@ def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPru
     logging.info("Num explanations created: {}".format(explanations))
 
 def _print_progress(number_of_nodes: int, current_node_index: int, round_number: int) -> None:
-    if number_of_nodes > 10000 and current_node_index%1000==0:
+    if number_of_nodes > 10000 and current_node_index % 1000 == 0:
         logging.info("Round {} at {}%".format(round_number, int(current_node_index/number_of_nodes*100)))
 
 # proflog = open("memory_profile", "w")
 # @profile(stream=proflog)
-def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path,Path], end_time: float, examples: Examples, blacklist: Blacklist = None) -> Set[Explanation]:
+def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path, Path], end_time: float, examples: Examples, blacklist: Blacklist = None) -> Set[Explanation]:
     """Follow the outgoing links of a single vertex and create new paths and explanations based on these extensions.
     
     Arguments:
@@ -190,6 +195,7 @@ def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path,Path],
         if time.time() > end_time:
             break
     return new_explanations
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

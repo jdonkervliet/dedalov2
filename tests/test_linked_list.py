@@ -2,6 +2,7 @@
 import unittest
 from linked_list import LinkedNode
 
+
 class TestLinkedList(unittest.TestCase):
     def test_create(self):
         l = LinkedNode(1)

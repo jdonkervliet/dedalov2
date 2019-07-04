@@ -27,6 +27,7 @@ class Explanation:
     def __str__(self):
         return "{} -| {}".format(self.path, self.value)
 
+
 class Record:
     def __init__(self, explanation: Explanation, score: float, num_examples: int = None, num_positives: int = None, num_connected_positives: int = None, num_connected_negatives: int = None):
         self.explanation: Explanation = explanation

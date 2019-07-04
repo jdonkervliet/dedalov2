@@ -1,10 +1,8 @@
 
-import bisect
-from typing import Collection, Set, Tuple
+from typing import Set, Tuple
 
 from example import Example, Examples
 from explanation import Explanation, Record
-from knowledge_graph import Vertex
 from path import Path
 
 
@@ -26,7 +24,7 @@ def find_best_explanation(explanations: Set[Explanation], examples: Examples) ->
         e.record = r
         e.path.max_score_found_on_path = max(e.path.max_score_found_on_path, new_score)
 
-# TODO use _fuzzy (underscore) to allow reusing found roots.
+
 def evaluate_explanation(e: Explanation, examples: Examples) -> float:
     """Evaluate the quality of an explanation.
     
@@ -37,6 +35,7 @@ def evaluate_explanation(e: Explanation, examples: Examples) -> float:
         float -- A numeric value for the quality of the explanation. Higher is better.
     """
     return fuzzy_f_measure(e, examples)
+
 
 def fuzzy_f_measure(e: Explanation, examples: Examples) -> float:
     """Calculates the F-measure score.
@@ -51,8 +50,10 @@ def fuzzy_f_measure(e: Explanation, examples: Examples) -> float:
     """
     return _fuzzy_f_measure(e.explains(examples), examples)
 
+
 def max_fuzzy_f_measure(p: Path, examples: Examples) -> float:
     return _fuzzy_f_measure(p.get_starting_points(), examples)
+
 
 def _fuzzy_f_measure(roots: Set[Example], examples: Examples) -> float:
     ftp_value, ffp_value, ffn_value = _tfpn_roots_positives(roots, set(examples.positives))
@@ -73,6 +74,7 @@ def _fuzzy_f_measure(roots: Set[Example], examples: Examples) -> float:
 #     assert res <= 1
 #     return res
 
+
 def ffp(roots: Set[Example], positives: Set[Example]) -> int:
     """Calculates the number of false positives for the given explanation and positive examples.
     
@@ -84,6 +86,7 @@ def ffp(roots: Set[Example], positives: Set[Example]) -> int:
         float -- The number of false positives.
     """
     return len(roots - positives)
+
 
 def ffn(roots: Set[Example], positives: Set[Example]) -> int:
     """Calculates the number of false negatives for the given explanation and positive examples.
@@ -97,6 +100,7 @@ def ffn(roots: Set[Example], positives: Set[Example]) -> int:
     """
     return len(positives - roots)
 
+
 def ftp(roots: Set[Example], positives: Set[Example]) -> int:
     """Calculates the number of true positives for the given explanation and positive examples.
     
@@ -108,6 +112,7 @@ def ftp(roots: Set[Example], positives: Set[Example]) -> int:
         float -- The number of true positives.
     """
     return len(roots & positives)
+
 
 def fr(ftp_value: float, ffn_value: float) -> float:
     """Calculates the recall value using the true positives and the false negatives.
@@ -124,6 +129,7 @@ def fr(ftp_value: float, ffn_value: float) -> float:
         return 0.0
     return ftp_value / (ftp_value + ffn_value)
 
+
 def fp(ftp_value: float, ffp_value: float) -> float:
     """Calculates precision value using the true positives and the false positives.
     Returns 0 if the denominator is 0 to avoid division by zero.
@@ -139,6 +145,7 @@ def fp(ftp_value: float, ffp_value: float) -> float:
         return 0.0
     return ftp_value / (ftp_value + ffp_value)
 
+
 def tfpn(e: Explanation, examples: Examples) -> Tuple[float, float, float]:
     """Computes the true positives, false positives, and false negatives of an explanation.
     Computing them all at once saves a little bit of computation time.
@@ -152,6 +159,7 @@ def tfpn(e: Explanation, examples: Examples) -> Tuple[float, float, float]:
     """
     roots = e.explains(examples)
     return _tfpn_roots_positives(roots, set(examples.positives))
+
 
 def _tfpn_roots_positives(roots: Set[Example], positives: Set[Example]) -> Tuple[float, float, float]:
     tp = ftp(roots, positives)

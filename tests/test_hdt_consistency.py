@@ -9,7 +9,10 @@ from example import Examples
 
 def strict_handler(exception):
     return u"", exception.end
+
+
 codecs.register_error("strict", strict_handler)
+
 
 class TestConsistentAnswers(unittest.TestCase):
 

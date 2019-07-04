@@ -1,7 +1,7 @@
 
 import os
-import path
 from typing import Optional, Set
+
 
 class Blacklist:
 

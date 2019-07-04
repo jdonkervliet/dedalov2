@@ -2,7 +2,8 @@
 import os
 from typing import Dict, Optional
 
-prefix_map: Dict[str,str] = {}
+prefix_map: Dict[str, str] = {}
+
 
 def setPrefixMapFromFile(filename: Optional[str]) -> None:
     prefixes: Dict[str, str] = {}
@@ -18,9 +19,11 @@ def setPrefixMapFromFile(filename: Optional[str]) -> None:
                 prefixes[prefix] = abbr
     setPrefixMap(prefixes)
 
-def setPrefixMap(pm: Dict[str,str]) -> None:
+
+def setPrefixMap(pm: Dict[str, str]) -> None:
     global prefix_map
     prefix_map = pm
+
 
 def shorten(uri: str) -> str:
     if prefix_map is None or len(prefix_map) == 0:
@@ -32,6 +35,7 @@ def shorten(uri: str) -> str:
         else:
             return __replace_prefix(uri, "/")
 
+
 def __replace_prefix(uri: str, sep: str) -> str:
     try:
         protocol, rest = uri.split("//", maxsplit=1)
@@ -41,5 +45,4 @@ def __replace_prefix(uri: str, sep: str) -> str:
             if pref in prefix_map:
                 return uri.replace(pref, "{}:".format(prefix_map[pref]), 1)
     except:
-        pass
-    return uri
+        return uri
