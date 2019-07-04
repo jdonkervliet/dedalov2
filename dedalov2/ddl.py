@@ -65,7 +65,7 @@ def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, 
     return (False, membytes)
 
 
-def main(example_file: str, output_file: str, hdt_file: str, heuristic: str, groupid: str = None, prefix: str = None, blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> None:
+def explain(example_file: str, output_file: str, hdt_file: str, heuristic: str, groupid: str = None, prefix: str = None, blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> None:
     """Search for an explanation given a file of URIs and the groups they belong to.
     
     Arguments:
@@ -88,10 +88,10 @@ def main(example_file: str, output_file: str, hdt_file: str, heuristic: str, gro
 
     mp: MemoryProfiler = profiler(mem_profile)
 
-    explain(examples, output_file, heuristic, pruner, mp, blacklist=bl, **kwargs)
+    _explain(examples, output_file, heuristic, pruner, mp, blacklist=bl, **kwargs)
 
 
-def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf, rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0, minimum_score: int = -1, memlimit: float = math.inf) -> None:
+def _explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf, rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0, minimum_score: int = -1, memlimit: float = math.inf) -> None:
     """Search for an explanations that explains the given examples.
     
     Arguments:
@@ -160,12 +160,12 @@ def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPru
     logging.info("Exiting...")
     logging.info("Num explanations created: {}".format(explanations))
 
+
 def _print_progress(number_of_nodes: int, current_node_index: int, round_number: int) -> None:
     if number_of_nodes > 10000 and current_node_index % 1000 == 0:
         logging.info("Round {} at {}%".format(round_number, int(current_node_index/number_of_nodes*100)))
 
-# proflog = open("memory_profile", "w")
-# @profile(stream=proflog)
+
 def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path, Path], end_time: float, examples: Examples, blacklist: Blacklist = None) -> Set[Explanation]:
     """Follow the outgoing links of a single vertex and create new paths and explanations based on these extensions.
     
@@ -241,4 +241,4 @@ if __name__ == "__main__":
     args_dict = vars(args)
     for k, v in args_dict.items():
         logging.info("USING {}: {}.".format(k.upper(), v))
-    main(**args_dict)
+    explain(**args_dict)
