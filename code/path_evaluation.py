@@ -5,7 +5,6 @@ from typing import Callable, Dict, List, Optional, Collection, Set
 
 from example import Example, Examples
 from explanation import Explanation
-from knowledge_graph import Subject
 from path import Path
 from path_pruner import PathPruner
 
@@ -59,8 +58,8 @@ def entropy(p: Path, examples: Examples) -> float:
         float -- A numerical value representing the quality of the path. Higher is better.
     """
     res: float = 0
-    for obj in p.end_points():
-        num_roots = len(set(e for e in examples if e.subject in p.starting_points_connected_to_object(obj)))
+    for obj in p.get_end_points():
+        num_roots = len(p.get_starting_points_connected_to_endpoint(obj))
         frac = num_roots/len(examples)
         assert frac >= 0
         assert frac <= 1

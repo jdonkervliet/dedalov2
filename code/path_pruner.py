@@ -5,7 +5,6 @@ from typing import Callable, Collection, Dict
 import explanation_evaluation
 from example import Example, Examples
 from explanation import Explanation
-from knowledge_graph import Subject
 from path import Path
 
 PathPruner = Callable[[Path], bool]

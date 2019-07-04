@@ -4,7 +4,7 @@ from typing import Collection, Set, Tuple
 
 from example import Example, Examples
 from explanation import Explanation, Record
-from knowledge_graph import Subject
+from knowledge_graph import Vertex
 from path import Path
 
 
@@ -52,7 +52,7 @@ def fuzzy_f_measure(e: Explanation, examples: Examples) -> float:
     return _fuzzy_f_measure(e.explains(examples), examples)
 
 def max_fuzzy_f_measure(p: Path, examples: Examples) -> float:
-    return _fuzzy_f_measure(set(e for e in examples if e.subject in p.starting_points()), examples)
+    return _fuzzy_f_measure(p.get_starting_points(), examples)
 
 def _fuzzy_f_measure(roots: Set[Example], examples: Examples) -> float:
     ftp_value, ffp_value, ffn_value = _tfpn_roots_positives(roots, set(examples.positives))
@@ -63,7 +63,7 @@ def _fuzzy_f_measure(roots: Set[Example], examples: Examples) -> float:
     res = 2 * (fp_value*fr_value)/(fp_value+fr_value)
     return res
 
-# def jesses_fuzzy_measure(roots: Collection[Example], positives: Collection[Subject]) -> float:
+# def jesses_fuzzy_measure(roots: Collection[Example], positives: Collection[Vertex]) -> float:
 #     ftp_value = ftp(roots, positives)
 #     good = ftp_value / len(positives)
 #     ffp_value = ffp(roots, positives)

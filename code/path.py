@@ -3,44 +3,49 @@ import copy
 from typing import Callable, Collection, Dict, List, MutableSet, Optional, Set
 
 from example import Example, Examples
-from knowledge_graph import Object, Predicate, Subject
+from knowledge_graph import Predicate, Vertex
 from linked_list import LinkedNode
 
 # Todo implement Paths class, remove the need to pass 'paths' to extend.
 class Path:
 
-    def __init__(self, edges: Optional[LinkedNode]):
-        self.edges: Optional[LinkedNode] = edges
+    @staticmethod
+    def from_examples(starting_examples: Examples):
+        path = Path()
+        for example in starting_examples:
+            path.start_to_ends.setdefault(example, set()).add(example.vertex)
+            path.end_to_starts.setdefault(example.vertex, set()).add(example)
+        return path
+
+    def __init__(self):
+        self.edges: Optional[LinkedNode] = None
         # TODO figure out what to do with this field.
         self.max_score_found_on_path: float = 0
-        self.objects_to_subject: Dict[Subject, Set[Object]] = {}
-        self.subjects_to_object: Dict[Object, Set[Subject]] = {}
+        self.start_to_ends: Dict[Example, Set[Vertex]] = {}
+        self.end_to_starts: Dict[Vertex, Set[Example]] = {}
 
-    def extend(self, paths: Dict['Path','Path'], s: Subject, p: Predicate, o: Object) -> 'Path':
+    def extend(self, paths: Dict['Path','Path'], s: Vertex, p: Predicate, o: Vertex) -> 'Path':
         edges = LinkedNode(p, self.edges)
-        path = Path(edges)
+        path = Path()
+        path.edges = edges
         if path in paths:
             path = paths[path]
         else:
             paths[path] = path
-        if len(path) == 1:
-            path.objects_to_subject.setdefault(s, set()).add(o)
-            path.subjects_to_object.setdefault(o, set()).add(s)
-        else:
-            starting_points: Set[Subject] = self.subjects_to_object[s.toObject()]
-            path.subjects_to_object.setdefault(o, set()).update(starting_points)
-            for s in starting_points:
-                path.objects_to_subject.setdefault(s, set()).add(o)
+        starting_points: Set[Example] = self.get_starting_points_connected_to_endpoint(s)
+        path.end_to_starts.setdefault(o, set()).update(starting_points)
+        for e in starting_points:
+            path.start_to_ends.setdefault(e, set()).add(o)
         return path
 
-    def starting_points(self) -> Set[Subject]:
-        return set(self.objects_to_subject.keys())
+    def get_starting_points(self) -> Set[Example]:
+        return set(self.start_to_ends.keys())
 
-    def starting_points_connected_to_object(self, o: Object) -> Set[Subject]:
-        return self.subjects_to_object.get(o, set())
+    def get_starting_points_connected_to_endpoint(self, o: Vertex) -> Set[Example]:
+        return self.end_to_starts.get(o, set())
 
-    def end_points(self) -> Set[Object]:
-        return set(self.subjects_to_object.keys())
+    def get_end_points(self) -> Set[Vertex]:
+        return set(self.end_to_starts.keys())
 
     def __len__(self):
         if self.edges is None:

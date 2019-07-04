@@ -2,18 +2,18 @@
 from typing import Optional, Set
 
 from example import Example, Examples
-from knowledge_graph import Object
+from knowledge_graph import Vertex
 from path import Path
 
 
 class Explanation:
-    def __init__(self, p: Path, value: Object):
+    def __init__(self, p: Path, value: Vertex):
         self.path: Path = p
-        self.value: Object = value
+        self.value: Vertex = value
         self.record: Optional[Record] = None
 
     def explains(self, examples: Examples) -> Set[Example]:
-        return set(example for example in examples if example.subject in self.path.starting_points_connected_to_object(self.value))
+        return self.path.get_starting_points_connected_to_endpoint(self.value)
 
     def __lt__(self, other):
         return self.path < other.path

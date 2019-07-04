@@ -22,7 +22,7 @@ import urishortener
 from blacklist import Blacklist
 from example import Example, Examples
 from explanation import Explanation
-from knowledge_graph import Object, Predicate, Subject
+from knowledge_graph import Predicate, Vertex
 from memory_profiler import MemoryProfiler, profiler
 from path import Path
 from path_evaluation import HEURISTIC_NAMES
@@ -97,12 +97,12 @@ def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPru
         rounds {float} -- The maximum number of rounds the algorithm will run. (default: {math.inf})
     """
 
-    nodes: Collection[Subject] = [ example.subject for example in examples ]
+    nodes: Collection[Vertex] = [ example.vertex for example in examples ]
 
     paths: Dict[Path,Path] = dict()
     explanations: int = 0
 
-    best_path: Optional[Path] = Path(None)
+    best_path: Optional[Path] = Path.from_examples(examples)
     end_time = time.time() + runtime
     round_number = 1
     shortest_path: int = 0
@@ -146,7 +146,7 @@ def explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPru
                 best_path = path_evaluation.find_best_path(heuristic, paths, examples, pruner, max_length=complete - 1)
                 if best_path is None:
                     break
-                nodes = knowledge_graph.objects_to_subjects(best_path.end_points())
+                nodes = set(v for v in best_path.get_end_points() if v.is_subject())
             else:
                 break
 
@@ -161,7 +161,7 @@ def _print_progress(number_of_nodes: int, current_node_index: int, round_number:
 
 # proflog = open("memory_profile", "w")
 # @profile(stream=proflog)
-def follow_outgoing_links(node: Subject, best_path: Path, paths: Dict[Path,Path], end_time: float, examples: Examples, blacklist: Blacklist = None) -> Set[Explanation]:
+def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path,Path], end_time: float, examples: Examples, blacklist: Blacklist = None) -> Set[Explanation]:
     """Follow the outgoing links of a single vertex and create new paths and explanations based on these extensions.
     
     Arguments:
@@ -176,11 +176,11 @@ def follow_outgoing_links(node: Subject, best_path: Path, paths: Dict[Path,Path]
         int -- The number of new explanations created. This value may include duplicates.
     """
     new_explanations: Set[Explanation] = set()
-    triples, k = local_hdt.document().search_triples_ids(node.id, 0, 0)
+    triples, k = local_hdt.document().search_triples_ids(node.s_id, 0, 0)
     for s_id, p_id, o_id in triples:
-        s = Subject(s_id)
+        s = Vertex.fromSubjectId(s_id)
         p = Predicate(p_id)
-        o = Object(o_id)
+        o = Vertex.fromObjectId(o_id)
         # Create new path.
         if blacklist is not None and blacklist.isBlacklisted(str(p)):
             continue

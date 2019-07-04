@@ -5,7 +5,7 @@ from typing import Callable, Collection, Iterator, List, Set
 
 import hdt
 import local_hdt
-from knowledge_graph import Subject, Object
+from knowledge_graph import Vertex
 
 class Example:
 
@@ -15,21 +15,21 @@ class Example:
             uri = uri[1:]
         if uri[-1] == ">":
             uri = uri[:-1]
-        subject = Subject.fromString(uri)
-        return Example(subject, positive)
+        vertex = Vertex.fromString(uri)
+        return Example(vertex, positive)
 
-    def __init__(self, subject: Subject, positive: bool = True):
-        self.subject: Subject = subject
+    def __init__(self, vertex: Vertex, positive: bool = True):
+        self.vertex: Vertex = vertex
         self.positive: bool = positive
 
     def __hash__(self):
-        return hash(self.subject) << 1 + (1 if self.positive else 0)
+        return hash(self.vertex) << 1 + (1 if self.positive else 0)
 
     def __eq__(self, other):
-        return isinstance(other, Example) and self.subject == other.subject and self.positive == other.positive
+        return isinstance(other, Example) and self.vertex == other.vertex and self.positive == other.positive
 
     def __str__(self):
-        return "{}-{}".format("P" if self.positive else "N", self.subject)
+        return "{}-{}".format("P" if self.positive else "N", self.vertex)
 
 class Examples:
 
