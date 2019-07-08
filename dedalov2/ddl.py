@@ -23,7 +23,7 @@ from .knowledge_graph import Predicate, Vertex
 from .memory_profiler import MemoryProfiler, profiler
 from .path import Path
 from .path_evaluation import HEURISTIC_NAMES
-from .path_pruner import PathPruner
+from .path_pruner import PathPruner, PATH_PRUNER_NAMES
 
 
 def strict_handler(exception):
@@ -54,7 +54,7 @@ def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, 
 
 
 def explain(hdt_file: str, example_file: str, heuristic: str, groupid: str = None, prefix: str = None,
-            blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> Iterator[Explanation]:
+            blacklist: str = None, truncate: int = 0, balance: bool = True, prune: str = "maxgt", mem_profile: bool = False, **kwargs) -> Iterator[Explanation]:
     """Search for an explanation given a file of URIs and the groups they belong to.
     
     Arguments:
@@ -71,7 +71,7 @@ def explain(hdt_file: str, example_file: str, heuristic: str, groupid: str = Non
 
     pruners: List[PathPruner] = []
     if prune > 0:
-        pruners.append(path_pruner.prune_max_path_score(explanation_evaluation.max_fuzzy_f_measure, examples))
+        pruners.append(PATH_PRUNER_NAMES[prune](explanation_evaluation.max_fuzzy_f_measure, examples))
     pruner = path_pruner.prune_multi_pruner(pruners, examples)
 
     mp: MemoryProfiler = profiler(mem_profile)
@@ -207,7 +207,8 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", type=str, help="File containing URI prefixes. Two columns [abbrv prefix] separated by whitespace.")
     parser.add_argument("--blacklist", type=str, help="File containing blacklisted URIs. The program does not follow these links.")
 
-    parser.add_argument("--prune", "-p", type=int, default=0, help="How aggressively to prune the search space. Higher values indicate more pruning.")
+    parser.add_argument("--prune", "-p", type=str, choices=PATH_PRUNER_NAMES, default="maxgt", help="How aggressively to prune the search space. \
+        Higher values indicate more pruning.")
     parser.add_argument("--minimum_score", type=float, default=-1, help="Explanations with scores less or equal to given value are not printed.")
 
     parser.add_argument("--mem-profile", action="store_true", help="Occassionally log memory usage. Can help with finding memory leaks.")
