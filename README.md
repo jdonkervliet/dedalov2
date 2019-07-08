@@ -35,7 +35,7 @@ The number at the start of each line indicates the _group_ the URI belongs to. Y
 
 You can use the following code to explain group 1.
 
-```
+```python
 import dedalov2 as ddl
 
 for explanation in ddl.explain("the-internet.hdt", "abba.txt", minimum_score=1):
@@ -44,7 +44,7 @@ for explanation in ddl.explain("the-internet.hdt", "abba.txt", minimum_score=1):
 
 The results depend on the `hdt` file you're using. If it includes URIs from DBPedia, the results look something like this:
 
-```python
+```
 http://dbpedia.org/property/label -| http://dbpedia.org/resource/Polar_Music
 http://dbpedia.org/property/associatedActs -| http://dbpedia.org/resource/ABBA
 http://dbpedia.org/property/wikilink -| http://dbpedia.org/resource/Anni-Frid_Lyngstad
