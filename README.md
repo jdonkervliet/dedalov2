@@ -2,6 +2,16 @@
 
 Dedalo explains why a set of URIs belongs together.
 
+## Installation
+
+Dedalov2 requires Python 3 and can be installed using Python's package manager, pip.
+
+```bash
+pip install dedalov2
+```
+
+Depending on your use case, you may want to pass the `-U` flag or run this in a virtual environment.
+
 ## Examples
 
 Have a look at the examples below and get going in seconds! The first example shows the main feature of this library and contains input and output details. The remaining examples show off more advanced features.
@@ -34,7 +44,7 @@ for explanation in ddl.explain("the-internet.hdt", "abba.txt", minimum_score=1):
 
 The results depend on the `hdt` file you're using. If it includes URIs from DBPedia, the results look something like this:
 
-```
+```python
 http://dbpedia.org/property/label -| http://dbpedia.org/resource/Polar_Music
 http://dbpedia.org/property/associatedActs -| http://dbpedia.org/resource/ABBA
 http://dbpedia.org/property/wikilink -| http://dbpedia.org/resource/Anni-Frid_Lyngstad
@@ -64,16 +74,6 @@ To learn more about what the input and output means, please read  the [backgroun
 #### Blacklisting URIs
 
 #### Handling Large Input Files
-
-## Installation
-
-Dedalov2 requires Python 3 and can be installed using Python's package manager, pip.
-
-```
-pip install dedalov2
-```
-
-Depending on your use case, you may want to pass the `-U` flag or run this in a virtual environment.
 
 ## Documentation
 
