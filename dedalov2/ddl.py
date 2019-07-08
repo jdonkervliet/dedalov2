@@ -6,8 +6,6 @@ import gc
 import logging
 import math
 import os
-import subprocess
-import sys
 import time
 from typing import Dict, Collection, Iterator, List, Optional, Set, Tuple
 
@@ -45,16 +43,6 @@ def print_examples(examples: Examples) -> None:
         LOG.debug(e)
 
 
-def print_git_hash() -> None:
-    dedalov2_directory = os.path.dirname(os.path.abspath(sys.argv[0]))
-    cmd = subprocess.run(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=dedalov2_directory)
-    if cmd.returncode == 0:
-        commit_hash = cmd.stdout.decode('UTF-8').strip()
-        LOG.debug("Dedalov2 repository is currently at commit {}".format(commit_hash))
-    else:
-        LOG.warning("Dedalov2 not located in git repository.")
-
-
 def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, float]:
     membytes = process.memory_info().rss
     if membytes >= memlimit:
@@ -72,7 +60,6 @@ def explain(hdt_file: str, example_file: str, heuristic: str, groupid: str = Non
     Arguments:
         args -- Arguments passed by argparse.
     """
-    print_git_hash()
     local_hdt.init(hdt_file)
 
     urishortener.setPrefixMapFromFile(prefix)
