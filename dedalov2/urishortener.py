@@ -44,5 +44,5 @@ def __replace_prefix(uri: str, sep: str) -> str:
             pref = "{}//{}{}".format(protocol, sep.join(parts[:i]), sep)
             if pref in prefix_map:
                 return uri.replace(pref, "{}:".format(prefix_map[pref]), 1)
-    except:
+    except IndexError:
         return uri

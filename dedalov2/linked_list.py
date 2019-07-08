@@ -15,7 +15,7 @@ class LinkedNode:
             for _ in range(num_back):
                 n = n.prev
             return n.value
-        except:
+        except ReferenceError:
             raise IndexError()
 
     def __str__(self):
