@@ -145,9 +145,8 @@ def _explain(examples: Examples, heuristic: str,
                 nodes = set(v for v in best_path.get_end_points() if v.is_subject())
             else:
                 break
-
-    except KeyboardInterrupt:
-        pass
+    except KeyboardInterrupt as ki:
+        raise ki
     LOG.debug("Exiting...")
     LOG.debug("Num explanations created: {}".format(explanations))
 
