@@ -7,6 +7,8 @@ from .example import Examples
 from .path import Path
 from .path_pruner import PathPruner
 
+LOG = logging.getLogger('mypkg.mymod')
+
 
 def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, pruner: PathPruner, max_length: float = float('inf')) -> Optional[Path]:
     """Get the best path from a collection of paths.
@@ -18,7 +20,7 @@ def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, 
     Returns:
         Path -- The best path.
     """
-    logging.info("EVALUATING {} POSSIBLE PATHS".format(len(paths)))
+    LOG.debug("EVALUATING {} POSSIBLE PATHS".format(len(paths)))
     score = float('-inf')
     res: Optional[Path] = None
     heuristic_search_func = get_heuristic_from_string(heuristic)
@@ -41,9 +43,9 @@ def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, 
             res = path
     for path in paths_to_delete:
         paths.pop(path, None)
-    logging.info("PRUNED {} PATHS".format(pruned))
-    logging.info("REMOVED {} TOO LONG PATHS".format(too_long))
-    logging.info("NEXT ROUND HAS {} REMAINING PATHS".format(len(paths)))
+    LOG.debug("PRUNED {} PATHS".format(pruned))
+    LOG.debug("REMOVED {} TOO LONG PATHS".format(too_long))
+    LOG.debug("NEXT ROUND HAS {} REMAINING PATHS".format(len(paths)))
     return res
 
 

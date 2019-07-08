@@ -9,7 +9,7 @@ import os
 import subprocess
 import sys
 import time
-from typing import Dict, Collection, List, Optional, Set, Tuple
+from typing import Dict, Collection, Iterator, List, Optional, Set, Tuple
 
 import psutil
 
@@ -33,16 +33,16 @@ def strict_handler(exception):
 
 
 codecs.register_error("strict", strict_handler)
-
+LOG = logging.getLogger('dedalov2.ddl')
 
 def validate_search_heuristic(heuristic: str) -> None:
     path_evaluation.get_heuristic_from_string(heuristic)
 
 
 def print_examples(examples: Examples) -> None:
-    logging.info("Using examples:")
+    LOG.debug("Using examples:")
     for e in examples:
-        logging.info(e)
+        LOG.debug(e)
 
 
 def print_git_hash() -> None:
@@ -50,9 +50,9 @@ def print_git_hash() -> None:
     cmd = subprocess.run(["git", "rev-parse", "HEAD"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=dedalov2_directory)
     if cmd.returncode == 0:
         commit_hash = cmd.stdout.decode('UTF-8').strip()
-        logging.info("Dedalov2 repository is currently at commit {}".format(commit_hash))
+        LOG.debug("Dedalov2 repository is currently at commit {}".format(commit_hash))
     else:
-        logging.warning("Dedalov2 not located in git repository.")
+        LOG.warning("Dedalov2 not located in git repository.")
 
 
 def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, float]:
@@ -92,8 +92,10 @@ def explain(hdt_file: str, example_file: str, output_file: str, heuristic: str, 
     _explain(examples, output_file, heuristic, pruner, mp, blacklist=bl, **kwargs)
 
 
-def _explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf,
-             rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0, minimum_score: int = -1, memlimit: float = math.inf) -> None:
+def _explain(examples: Examples, outputfile: str, heuristic: str,
+             pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf,
+             rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0,
+             minimum_score: int = -1, memlimit: float = math.inf) -> Iterator[Explanation]:
     """Search for an explanations that explains the given examples.
     
     Arguments:
@@ -119,8 +121,8 @@ def _explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPr
             mp()
             new_explanations: Set[Explanation] = set()
             if complete > 0 and len(best_path) < complete:
-                logging.info("ROUND: {}".format(round_number))
-                logging.info("PATH: {} NUMVERTICES: {}".format(best_path, len(nodes)))
+                LOG.debug("ROUND: {}".format(round_number))
+                LOG.debug("PATH: {} NUMVERTICES: {}".format(best_path, len(nodes)))
                 round_start = time.time()
                 for i, node in enumerate(nodes):
                     _print_progress(len(nodes), i, round_number)
@@ -129,22 +131,23 @@ def _explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPr
                     explanations += len(e)
                     curtime = time.time()
                     if curtime > end_time:
-                        logging.info("RUNTIME LIMIT EXCEEDED: {} > {}. EXITING".format(curtime, end_time))
+                        LOG.debug("RUNTIME LIMIT EXCEEDED: {} > {}. EXITING".format(curtime, end_time))
                         break
             if len(new_explanations) > 0:
                 explanation_evaluation.find_best_explanation(new_explanations, examples)
                 for exp in new_explanations:
                     if exp.record is not None and exp.record.score > minimum_score:
-                        logging.debug("ROUND: {} {}".format(round_number, exp.record))
+                        LOG.debug("ROUND: {} {}".format(round_number, exp.record))
+                        yield exp
             paths.pop(best_path, None)
 
             round_duration = time.time() - round_start
             exceeded, num_bytes = mem_limit_exceeded(process, memlimit)
-            logging.info("ROUND: {} TIME: {} MEMBYTES: {}".format(round_number, round_duration, num_bytes))
+            LOG.debug("ROUND: {} TIME: {} MEMBYTES: {}".format(round_number, round_duration, num_bytes))
             mp()
             round_number += 1
             if exceeded:
-                logging.info("MEMLIMIT EXCEEDED: {} > {}. EXITING".format(num_bytes, memlimit))
+                LOG.debug("MEMLIMIT EXCEEDED: {} > {}. EXITING".format(num_bytes, memlimit))
                 break
 
             if len(paths) > 0:
@@ -159,13 +162,13 @@ def _explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPr
 
     except KeyboardInterrupt:
         pass
-    logging.info("Exiting...")
-    logging.info("Num explanations created: {}".format(explanations))
+    LOG.debug("Exiting...")
+    LOG.debug("Num explanations created: {}".format(explanations))
 
 
 def _print_progress(number_of_nodes: int, current_node_index: int, round_number: int) -> None:
     if number_of_nodes > 10000 and current_node_index % 1000 == 0:
-        logging.info("Round {} at {}%".format(round_number, int(current_node_index/number_of_nodes*100)))
+        LOG.debug("Round {} at {}%".format(round_number, int(current_node_index/number_of_nodes*100)))
 
 
 def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path, Path], end_time: float,

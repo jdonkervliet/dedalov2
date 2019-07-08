@@ -7,6 +7,8 @@ from .path import Path
 
 PathPruner = Callable[[Path], bool]
 
+LOG = logging.getLogger('dedalov2.path_pruner')
+
 
 def prune_max_path_score(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
     def p(p: Path) -> bool:
@@ -14,7 +16,7 @@ def prune_max_path_score(explanation_evaluation_func: Callable[[Path, Examples],
         best_found = p.max_score_found_on_path
         should_prune = best_found >= new_max
         if should_prune:
-            logging.debug("SKIP {} FOUND {} MAX {}".format(p, best_found, new_max))
+            LOG.debug("SKIP {} FOUND {} MAX {}".format(p, best_found, new_max))
             return True
         return False
     return p

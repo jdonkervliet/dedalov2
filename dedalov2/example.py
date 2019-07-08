@@ -5,6 +5,7 @@ from typing import Iterator, List
 
 from .knowledge_graph import Vertex
 
+LOG = logging.getLogger('dedalov2.example')
 
 class Example:
 
@@ -49,16 +50,16 @@ class Examples:
                     if first_line:
                         if groupid is None:
                             groupid = int(group)
-                            logging.info("Positive example group ID not set. Using '{}'.".format(groupid))
+                            LOG.warning("Positive example group ID not set. Using '{}'.".format(groupid))
                         else:
-                            logging.info("Positive example group ID set to '{}'.".format(groupid))
+                            LOG.debug("Positive example group ID set to '{}'.".format(groupid))
                         first_line = False
                     uri = parts[1]
                     try:
                         e = Example.fromString(uri, int(group) == int(groupid))
                         examples.add_example(e)
                     except ValueError as err:
-                        logging.warning(err)
+                        LOG.warning(err)
         if truncate > 0:
             examples.truncate(truncate)
         if balance:
