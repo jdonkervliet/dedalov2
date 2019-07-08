@@ -1,9 +1,9 @@
 
 from typing import Optional, Set
 
-from example import Example, Examples
-from knowledge_graph import Vertex
-from path import Path
+from .example import Example, Examples
+from .knowledge_graph import Vertex
+from .path import Path
 
 
 class Explanation:
@@ -29,7 +29,8 @@ class Explanation:
 
 
 class Record:
-    def __init__(self, explanation: Explanation, score: float, num_examples: int = None, num_positives: int = None, num_connected_positives: int = None, num_connected_negatives: int = None):
+    def __init__(self, explanation: Explanation, score: float, num_examples: int = None, num_positives: int = None,
+                 num_connected_positives: int = None, num_connected_negatives: int = None):
         self.explanation: Explanation = explanation
         self.score: float = score
         self.num_examples: Optional[int] = num_examples
@@ -41,7 +42,12 @@ class Record:
         if self.num_examples is None or self.num_positives is None or self.num_connected_positives is None or self.num_connected_negatives is None:
             return "SCORE: {} EXPL: {}".format(self.score, self.explanation)
         else:
-            return "SCORE: {} P:{}:{} N:{}:{} EXPL: {}".format(self.score, self.num_connected_positives, self.num_positives, self.num_connected_negatives, self.num_examples-self.num_positives, self.explanation)
+            return "SCORE: {} P:{}:{} N:{}:{} EXPL: {}".format(self.score,
+                                                               self.num_connected_positives,
+                                                               self.num_positives,
+                                                               self.num_connected_negatives,
+                                                               self.num_examples-self.num_positives,
+                                                               self.explanation)
 
     def __lt__(self, other):
         return self.score < other.score

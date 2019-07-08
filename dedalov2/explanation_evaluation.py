@@ -1,9 +1,9 @@
 
 from typing import Set, Tuple
 
-from example import Example, Examples
-from explanation import Explanation, Record
-from path import Path
+from .example import Example, Examples
+from .explanation import Explanation, Record
+from .path import Path
 
 
 def find_best_explanation(explanations: Set[Explanation], examples: Examples) -> None:
@@ -20,17 +20,18 @@ def find_best_explanation(explanations: Set[Explanation], examples: Examples) ->
         new_score = evaluate_explanation(e, examples)
         roots = e.explains(examples)
         positive_example_set = set(examples.positives)
-        r = Record(e, new_score, num_examples=len(examples), num_positives=len(examples.positives), num_connected_positives=ftp(roots, positive_example_set), num_connected_negatives=ffp(roots, positive_example_set))
+        r = Record(e, new_score, num_examples=len(examples), num_positives=len(examples.positives), num_connected_positives=ftp(roots, positive_example_set),
+                   num_connected_negatives=ffp(roots, positive_example_set))
         e.record = r
         e.path.max_score_found_on_path = max(e.path.max_score_found_on_path, new_score)
 
 
 def evaluate_explanation(e: Explanation, examples: Examples) -> float:
     """Evaluate the quality of an explanation.
-    
+
     Arguments:
         e {Explanation} -- To compute the quality of.
-    
+
     Returns:
         float -- A numeric value for the quality of the explanation. Higher is better.
     """
@@ -40,11 +41,11 @@ def evaluate_explanation(e: Explanation, examples: Examples) -> float:
 def fuzzy_f_measure(e: Explanation, examples: Examples) -> float:
     """Calculates the F-measure score.
     Returns 0 if the denominator is 0 to avoid division by zero.
-    
+
     Arguments:
         roots {set} -- The roots explained by some explanation.
         positives {set} -- The positive examples
-    
+
     Returns:
         float -- the F-measure value
     """
@@ -77,11 +78,11 @@ def _fuzzy_f_measure(roots: Set[Example], examples: Examples) -> float:
 
 def ffp(roots: Set[Example], positives: Set[Example]) -> int:
     """Calculates the number of false positives for the given explanation and positive examples.
-    
+
     Arguments:
         e {Explanation} -- The explanation to compute the false positives for.
         positives -- A set of positive examples.
-    
+
     Returns:
         float -- The number of false positives.
     """

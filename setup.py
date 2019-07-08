@@ -14,6 +14,9 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     package_dir={"": "."},
     packages=["dedalov2"],
+    install_requires=[
+        "psutil>=5.6.3"
+    ],
     url="https://github.com/jdonkervliet/dedalov2",
     classifiers=[
         "Programming Language :: Python :: 3",

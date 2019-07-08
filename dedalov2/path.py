@@ -1,9 +1,9 @@
 
 from typing import Dict, Optional, Set
 
-from example import Example, Examples
-from knowledge_graph import Predicate, Vertex
-from linked_list import LinkedNode
+from .example import Example, Examples
+from .knowledge_graph import Predicate, Vertex
+from .linked_list import LinkedNode
 
 
 class Path:
@@ -23,7 +23,7 @@ class Path:
         self.start_to_ends: Dict[Example, Set[Vertex]] = {}
         self.end_to_starts: Dict[Vertex, Set[Example]] = {}
 
-    def extend(self, paths: Dict['Path','Path'], s: Vertex, p: Predicate, o: Vertex) -> 'Path':
+    def extend(self, paths: Dict['Path', 'Path'], s: Vertex, p: Predicate, o: Vertex) -> 'Path':
         edges = LinkedNode(p, self.edges)
         path = Path()
         path.edges = edges
