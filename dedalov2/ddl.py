@@ -54,7 +54,7 @@ def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, 
 
 
 def explain(hdt_file: str, example_file: str, heuristic: str = "entropy", groupid: int = None, prefix: str = None,
-            blacklist: str = None, truncate: int = 0, balance: bool = True, prune: str = "maxgt", mem_profile: bool = False, **kwargs) -> Iterator[Explanation]:
+            blacklist: str = None, truncate: int = 0, balance: bool = True, prune: str = "maxge", mem_profile: bool = False, **kwargs) -> Iterator[Explanation]:
     """Search for an explanation given a file of URIs and the groups they belong to.
     
     Arguments:
@@ -207,7 +207,7 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", type=str, help="File containing URI prefixes. Two columns [abbrv prefix] separated by whitespace.")
     parser.add_argument("--blacklist", type=str, help="File containing blacklisted URIs. The program does not follow these links.")
 
-    parser.add_argument("--prune", "-p", type=str, choices=PATH_PRUNER_NAMES, default="maxgt", help="How aggressively to prune the search space. \
+    parser.add_argument("--prune", "-p", type=str, choices=PATH_PRUNER_NAMES, default="maxge", help="How aggressively to prune the search space. \
         Higher values indicate more pruning.")
     parser.add_argument("--minimum_score", type=float, default=-1, help="Explanations with scores less or equal to given value are not printed.")
 

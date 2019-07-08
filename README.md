@@ -72,6 +72,13 @@ To learn more about what the input and output means, please read  the [backgroun
 
 #### Pruning Search Paths
 
+By default, Dedalov2 applies branch pruning to reduce the amount of work it needs to do. You can turn this off, or reduce its effects, by selecting a different branch pruning method. There are currently four such methods available.
+
+1. maxge: Only follow a path if it can lead to an explana
+2. maxg": prune_max_score_greater,
+3. pathge": prune_max_path_score_greater_equal,
+4. pathg": prune_max_path_score_greater,
+
 #### Using URI Prefixes
 
 The long URIs in the results make them hard to read. Dedalov2 supports URI prefixes. Simply pass your file with prefixes as a parameter.
