@@ -64,7 +64,7 @@ http://dbpedia.org/property/wikilink -| http://dbpedia.org/resource/Rik_Mayall
 http://dbpedia.org/ontology/label -| http://dbpedia.org/resource/Polar_Music
 ```
 
-To learn more about what the input and output means, please read  the [background section](#background).
+[Using URI prefixes](#using-uri-prefixes) makes the output look better. To learn more about what the input and output means, please read  the [background section](#background).
 
 ### Advanced Features
 
