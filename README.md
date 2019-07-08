@@ -38,7 +38,10 @@ You can use the following code to explain group 1.
 ```python
 import dedalov2 as ddl
 
-for explanation in ddl.explain("the-internet.hdt", "abba.txt", minimum_score=1, groupid=1):
+for explanation in ddl.explain("the-internet.hdt",
+															 "abba.txt",
+															 minimum_score=1,
+															 groupid=1):
     print(explanation)
 ```
 
@@ -76,7 +79,11 @@ The long URIs in the results make them hard to read. Dedalov2 supports URI prefi
 ```python
 import dedalov2 as ddl
 
-for explanation in ddl.explain("the-internet.hdt", "abba.txt", minimum_score=1, groupid=1, prefix="prefix.txt"):
+for explanation in ddl.explain("the-internet.hdt",
+															 "abba.txt",
+															 minimum_score=1,
+															 groupid=1,
+															 prefix="prefix.txt"):
     print(explanation)
 ```
 
