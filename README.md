@@ -122,7 +122,7 @@ gr		http://purl.org/goodrelations/v1#
 ...
 ```
 
-Don't write this file yourself. Download one from [http://prefix.cc/popular]().
+Don't write this file yourself. Download one from [http://prefix.cc/popular](http://prefix.cc/popular).
 
 #### Blacklisting URIs
 
