@@ -74,10 +74,12 @@ To learn more about what the input and output means, please read  the [backgroun
 
 By default, Dedalov2 applies branch pruning to reduce the amount of work it needs to do. You can turn this off, or reduce its effects, by selecting a different branch pruning method. There are currently four such methods available.
 
-1. maxge: Only follow a path if it can lead to an explana
-2. maxg": prune_max_score_greater,
-3. pathge": prune_max_path_score_greater_equal,
-4. pathg": prune_max_path_score_greater,
+1. maxge: (**Default**) Prune path if it can only yield explanations less _or equal_ than the current global maximum. 
+2. maxg: Prune path if it can only yield explanations less than the current global maximum.
+3. pathge: Prune path if it can only yield explanations less or equal than the current _path_ maximum.
+4. pathg: Prune path if it can only yield explanations less than the current _path_ maximum.
+
+You can change the path pruning policy by passing it as a parameter. E.g., `ddl.explain("the-internet.hdt, "abba.txt", prune="pathg")`.
 
 #### Using URI Prefixes
 
