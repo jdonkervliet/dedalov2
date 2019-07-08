@@ -79,7 +79,11 @@ By default, Dedalov2 applies branch pruning to reduce the amount of work it need
 3. pathge: Prune path if it can only yield explanations less or equal than the current _path_ maximum.
 4. pathg: Prune path if it can only yield explanations less than the current _path_ maximum.
 
-You can change the path pruning policy by passing it as a parameter. E.g., `ddl.explain("the-internet.hdt, "abba.txt", prune="pathg")`.
+You can change the path pruning policy by passing it as a parameter.
+
+```python
+ddl.explain("the-internet.hdt", "abba.txt", prune="pathg")
+```
 
 #### Using URI Prefixes
 
