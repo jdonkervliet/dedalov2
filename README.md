@@ -6,7 +6,7 @@ Dedalo explains why a set of URIs belongs together.
 
 Have a look at the example below and get going in seconds!
 
-For the examples below, we'll use the file `abba.txt` as input. Its contents are:
+We'll use the file `abba.txt` as input. Its contents are:
 
 ```
 1,http://dbpedia.org/resource/Benny_Andersson
