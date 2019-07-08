@@ -16,7 +16,6 @@ def prune_max_path_score(explanation_evaluation_func: Callable[[Path, Examples],
         best_found = p.max_score_found_on_path
         should_prune = best_found >= new_max
         if should_prune:
-            LOG.debug("SKIP {} FOUND {} MAX {}".format(p, best_found, new_max))
             return True
         return False
     return p
