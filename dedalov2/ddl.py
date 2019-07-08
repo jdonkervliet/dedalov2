@@ -123,7 +123,7 @@ def _explain(examples: Examples, heuristic: str,
             if len(new_explanations) > 0:
                 explanation_evaluation.find_best_explanation(new_explanations, examples)
                 for exp in new_explanations:
-                    if exp.record is not None and exp.record.score > minimum_score:
+                    if exp.record is not None and exp.record.score >= minimum_score:
                         yield exp
             paths.pop(best_path, None)
 
