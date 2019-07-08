@@ -70,14 +70,14 @@ def explain(hdt_file: str, example_file: str, heuristic: str, groupid: str = Non
     print_examples(examples)
 
     pruners: List[PathPruner] = []
-    if prune > 0:
+    if prune in PATH_PRUNER_NAMES:
         pruners.append(PATH_PRUNER_NAMES[prune](explanation_evaluation.max_fuzzy_f_measure, examples))
-    pruner = path_pruner.prune_multi_pruner(pruners, examples)
-
-    mp: MemoryProfiler = profiler(mem_profile)
-
-    for explanation in _explain(examples, heuristic, pruner, mp, blacklist=bl, **kwargs):
-        yield explanation
+        pruner = path_pruner.prune_multi_pruner(pruners, examples)
+        mp: MemoryProfiler = profiler(mem_profile)
+        for explanation in _explain(examples, heuristic, pruner, mp, blacklist=bl, **kwargs):
+            yield explanation
+    else:
+        LOG.error("Path pruner '{}' does not exist.".format(prune))
 
 
 def _explain(examples: Examples, heuristic: str,
