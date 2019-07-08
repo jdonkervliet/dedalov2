@@ -1,7 +1,7 @@
 
 import hdt
-import local_hdt
-import urishortener
+from . import local_hdt
+from . import urishortener
 
 
 class Predicate:
@@ -49,7 +49,7 @@ class Vertex:
             raise ValueError("0 is not a valid Object ID.")
         uri = local_hdt.document().convert_id(id, hdt.IdentifierPosition.Object)
         s_id = local_hdt.document().convert_term(uri, hdt.IdentifierPosition.Subject)
-        return Vertex(s_id=id, o_id=id)
+        return Vertex(s_id=s_id, o_id=id)
 
     def __init__(self, s_id: int = 0, o_id: int = 0):
         if s_id == 0 and o_id == 0:

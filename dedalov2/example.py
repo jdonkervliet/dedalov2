@@ -3,7 +3,7 @@ import logging
 import os
 from typing import Iterator, List
 
-from knowledge_graph import Vertex
+from .knowledge_graph import Vertex
 
 
 class Example:

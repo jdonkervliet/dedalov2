@@ -13,19 +13,19 @@ from typing import Dict, Collection, List, Optional, Set, Tuple
 
 import psutil
 
-import explanation_evaluation
-import local_hdt
-import path_evaluation
-import path_pruner
-import urishortener
-from blacklist import Blacklist
-from example import Examples
-from explanation import Explanation
-from knowledge_graph import Predicate, Vertex
-from memory_profiler import MemoryProfiler, profiler
-from path import Path
-from path_evaluation import HEURISTIC_NAMES
-from path_pruner import PathPruner
+from . import explanation_evaluation
+from . import local_hdt
+from . import path_evaluation
+from . import path_pruner
+from . import urishortener
+from .blacklist import Blacklist
+from .example import Examples
+from .explanation import Explanation
+from .knowledge_graph import Predicate, Vertex
+from .memory_profiler import MemoryProfiler, profiler
+from .path import Path
+from .path_evaluation import HEURISTIC_NAMES
+from .path_pruner import PathPruner
 
 
 def strict_handler(exception):
@@ -65,7 +65,8 @@ def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, 
     return (False, membytes)
 
 
-def explain(example_file: str, output_file: str, hdt_file: str, heuristic: str, groupid: str = None, prefix: str = None, blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> None:
+def explain(hdt_file: str, example_file: str, output_file: str, heuristic: str, groupid: str = None, prefix: str = None,
+            blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> None:
     """Search for an explanation given a file of URIs and the groups they belong to.
     
     Arguments:
@@ -91,7 +92,8 @@ def explain(example_file: str, output_file: str, hdt_file: str, heuristic: str, 
     _explain(examples, output_file, heuristic, pruner, mp, blacklist=bl, **kwargs)
 
 
-def _explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf, rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0, minimum_score: int = -1, memlimit: float = math.inf) -> None:
+def _explain(examples: Examples, outputfile: str, heuristic: str, pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf,
+             rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0, minimum_score: int = -1, memlimit: float = math.inf) -> None:
     """Search for an explanations that explains the given examples.
     
     Arguments:
@@ -166,7 +168,8 @@ def _print_progress(number_of_nodes: int, current_node_index: int, round_number:
         logging.info("Round {} at {}%".format(round_number, int(current_node_index/number_of_nodes*100)))
 
 
-def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path, Path], end_time: float, examples: Examples, blacklist: Blacklist = None) -> Set[Explanation]:
+def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path, Path], end_time: float,
+                          examples: Examples, blacklist: Blacklist = None) -> Set[Explanation]:
     """Follow the outgoing links of a single vertex and create new paths and explanations based on these extensions.
     
     Arguments:
@@ -204,7 +207,8 @@ if __name__ == "__main__":
     parser.add_argument("--hdt-file", type=str, default="/scratch/wbeek/data/LOD-a-lot/data.hdt", help="Location of HDT file to use.")
     parser.add_argument("--groupid", type=int, help="The positive examples group number.")
     parser.add_argument("--truncate", "-t", type=int, help="Selects the first x positive and negative examples. The resulting input has size 2x.")
-    parser.add_argument("--balance", "-b", action="store_true", help="Makes sure that the number of positive examples equals the number of negative examples. Is performed after the _truncate_ option.")
+    parser.add_argument("--balance", "-b", action="store_true", help="Makes sure that the number of positive examples equals the number of negative examples. \
+        Is performed after the _truncate_ option.")
 
     parser.add_argument("--heuristic", type=str, choices=HEURISTIC_NAMES, default="bfs", help="The search heuristic to use.")
 

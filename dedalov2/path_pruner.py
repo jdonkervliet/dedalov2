@@ -2,8 +2,8 @@
 import logging
 from typing import Callable, Collection
 
-from example import Examples
-from path import Path
+from .example import Examples
+from .path import Path
 
 PathPruner = Callable[[Path], bool]
 

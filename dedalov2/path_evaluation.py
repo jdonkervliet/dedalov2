@@ -3,9 +3,9 @@ import logging
 import math
 from typing import Callable, Dict, Optional, Set
 
-from example import Examples
-from path import Path
-from path_pruner import PathPruner
+from .example import Examples
+from .path import Path
+from .path_pruner import PathPruner
 
 
 def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, pruner: PathPruner, max_length: float = float('inf')) -> Optional[Path]:
