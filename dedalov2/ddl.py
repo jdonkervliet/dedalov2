@@ -108,19 +108,18 @@ def _explain(examples: Examples, heuristic: str,
         while best_path is not None and time.time() < end_time and round_number <= rounds and (complete == 0 or shortest_path < complete):
             mp()
             new_explanations: Set[Explanation] = set()
-            if complete > 0 and len(best_path) < complete:
-                LOG.debug("ROUND: {}".format(round_number))
-                LOG.debug("PATH: {} NUMVERTICES: {}".format(best_path, len(nodes)))
-                round_start = time.time()
-                for i, node in enumerate(nodes):
-                    _print_progress(len(nodes), i, round_number)
-                    e = follow_outgoing_links(node, best_path, paths, end_time, examples, blacklist=blacklist)
-                    new_explanations.update(e)
-                    explanations += len(e)
-                    curtime = time.time()
-                    if curtime > end_time:
-                        LOG.debug("RUNTIME LIMIT EXCEEDED: {} > {}. EXITING".format(curtime, end_time))
-                        break
+            LOG.debug("ROUND: {}".format(round_number))
+            LOG.debug("PATH: {} NUMVERTICES: {}".format(best_path, len(nodes)))
+            round_start = time.time()
+            for i, node in enumerate(nodes):
+                _print_progress(len(nodes), i, round_number)
+                e = follow_outgoing_links(node, best_path, paths, end_time, examples, blacklist=blacklist)
+                new_explanations.update(e)
+                explanations += len(e)
+                curtime = time.time()
+                if curtime > end_time:
+                    LOG.debug("RUNTIME LIMIT EXCEEDED: {} > {}. EXITING".format(curtime, end_time))
+                    break
             if len(new_explanations) > 0:
                 explanation_evaluation.find_best_explanation(new_explanations, examples)
                 for exp in new_explanations:
