@@ -54,7 +54,7 @@ def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, 
 
 
 def explain(hdt_file: str, example_file: str, heuristic: str, groupid: str = None, prefix: str = None,
-            blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> None:
+            blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> Iterator[Explanation]:
     """Search for an explanation given a file of URIs and the groups they belong to.
     
     Arguments:
@@ -76,7 +76,8 @@ def explain(hdt_file: str, example_file: str, heuristic: str, groupid: str = Non
 
     mp: MemoryProfiler = profiler(mem_profile)
 
-    _explain(examples, heuristic, pruner, mp, blacklist=bl, **kwargs)
+    for explanation in _explain(examples, heuristic, pruner, mp, blacklist=bl, **kwargs):
+        yield explanation
 
 
 def _explain(examples: Examples, heuristic: str,
