@@ -65,7 +65,7 @@ def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, 
     return (False, membytes)
 
 
-def explain(hdt_file: str, example_file: str, output_file: str, heuristic: str, groupid: str = None, prefix: str = None,
+def explain(hdt_file: str, example_file: str, heuristic: str, groupid: str = None, prefix: str = None,
             blacklist: str = None, truncate: int = 0, balance: bool = False, prune: int = 0, mem_profile: bool = False, **kwargs) -> None:
     """Search for an explanation given a file of URIs and the groups they belong to.
     
@@ -89,10 +89,10 @@ def explain(hdt_file: str, example_file: str, output_file: str, heuristic: str, 
 
     mp: MemoryProfiler = profiler(mem_profile)
 
-    _explain(examples, output_file, heuristic, pruner, mp, blacklist=bl, **kwargs)
+    _explain(examples, heuristic, pruner, mp, blacklist=bl, **kwargs)
 
 
-def _explain(examples: Examples, outputfile: str, heuristic: str,
+def _explain(examples: Examples, heuristic: str,
              pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf,
              rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0,
              minimum_score: int = -1, memlimit: float = math.inf) -> Iterator[Explanation]:
@@ -205,7 +205,6 @@ def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path, Path]
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("example_file")
-    parser.add_argument("output_file", type=str, help="Output file.")
     parser.add_argument("--hdt-file", type=str, default="/scratch/wbeek/data/LOD-a-lot/data.hdt", help="Location of HDT file to use.")
     parser.add_argument("--groupid", type=int, help="The positive examples group number.")
     parser.add_argument("--truncate", "-t", type=int, help="Selects the first x positive and negative examples. The resulting input has size 2x.")
@@ -229,22 +228,13 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     ch = logging.StreamHandler()
-    ch.setLevel(logging.INFO)
+    ch.setLevel(logging.DEBUG)
     ch.setFormatter(logging.Formatter('%(asctime)s %(levelname)-8s %(message)s', '%Y-%m-%d %H:%M:%S'))
     logging.getLogger('').addHandler(ch)
-
-    if os.path.isfile(args.output_file):
-        print("Output file {} already exists. Exiting.".format(args.output_file))
-        sys.exit(0)
-
-    fh = logging.FileHandler(args.output_file)
-    fh.setLevel(logging.DEBUG)
-    fh.setFormatter(logging.Formatter('%(asctime)s.%(msecs)03d %(levelname)-8s %(message)s', '%Y-%m-%d %H:%M:%S'))
-    logging.getLogger('').addHandler(fh)
-
     logging.getLogger().setLevel(logging.DEBUG)
 
     args_dict = vars(args)
     for k, v in args_dict.items():
         logging.info("USING {}: {}.".format(k.upper(), v))
-    explain(**args_dict)
+    for explanation in explain(**args_dict):
+        logging.info(explanation)
