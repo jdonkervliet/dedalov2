@@ -7,7 +7,7 @@ from .example import Examples
 from .path import Path
 from .path_pruner import PathPruner
 
-LOG = logging.getLogger('mypkg.mymod')
+LOG = logging.getLogger('dedalov2.path_evaluation')
 
 
 def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, pruner: PathPruner, max_length: float = float('inf')) -> Optional[Path]:

@@ -137,7 +137,6 @@ def _explain(examples: Examples, outputfile: str, heuristic: str,
                 explanation_evaluation.find_best_explanation(new_explanations, examples)
                 for exp in new_explanations:
                     if exp.record is not None and exp.record.score > minimum_score:
-                        LOG.debug("ROUND: {} {}".format(round_number, exp.record))
                         yield exp
             paths.pop(best_path, None)
 
