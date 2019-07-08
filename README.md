@@ -2,21 +2,9 @@
 
 Dedalo explains why a set of URIs belongs together.
 
-## Installation
+## Example
 
-Dedalov2 requires Python 3 and can be installed using Python's package manager, pip.
-
-```bash
-pip install dedalov2
-```
-
-Depending on your use case, you may want to pass the `-U` flag or run this in a virtual environment.
-
-## Examples
-
-Have a look at the examples below and get going in seconds! The first example shows the main feature of this library and contains input and output details. The remaining examples show off more advanced features.
-
-### Full Example
+Have a look at the example below and get going in seconds!
 
 For the examples below, we'll use the file `abba.txt` as input. Its contents are:
 
@@ -66,11 +54,21 @@ http://dbpedia.org/ontology/label -| http://dbpedia.org/resource/Polar_Music
 
 [Using URI prefixes](#using-uri-prefixes) makes the output look better. To learn more about what the input and output means, please read  the [background section](#background).
 
-### Advanced Features
+## Installation
 
-#### Changing the Search Heuristic
+Dedalov2 requires Python 3 and can be installed using Python's package manager, pip.
 
-#### Pruning Search Paths
+```bash
+pip install dedalov2
+```
+
+Depending on your use case, you may want to pass the `-U` flag or run this in a virtual environment.
+
+## Features
+
+### Changing the Search Heuristic
+
+### Pruning Search Paths
 
 By default, Dedalov2 applies branch pruning to reduce the amount of work it needs to do. You can turn this off, or reduce its effect, by selecting a different branch pruning method. There are currently five such methods available.
 
@@ -88,7 +86,7 @@ You can change the path pruning policy by passing it as a parameter.
 ddl.explain("the-internet.hdt", "abba.txt", prune="path-less-equal")
 ```
 
-#### Using URI Prefixes
+### Using URI Prefixes
 
 The long URIs in the results make them hard to read. Dedalov2 supports URI prefixes. Simply pass your file with prefixes as a parameter.
 
@@ -140,9 +138,9 @@ gr	http://purl.org/goodrelations/v1#
 
 Don't write this file yourself. Download one from [http://prefix.cc/popular](http://prefix.cc/popular).
 
-#### Blacklisting URIs
+### Blacklisting URIs
 
-#### Handling Large Input Files
+### Handling Large Input Files
 
 ## Documentation
 
