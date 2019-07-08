@@ -72,12 +72,13 @@ To learn more about what the input and output means, please read  the [backgroun
 
 #### Pruning Search Paths
 
-By default, Dedalov2 applies branch pruning to reduce the amount of work it needs to do. You can turn this off, or reduce its effects, by selecting a different branch pruning method. There are currently four such methods available.
+By default, Dedalov2 applies branch pruning to reduce the amount of work it needs to do. You can turn this off, or reduce its effect, by selecting a different branch pruning method. There are currently four such methods available.
 
 1. maxge: (**Default**) Prune path if it can only yield explanations less _or equal_ than the current global maximum. 
 2. maxg: Prune path if it can only yield explanations less than the current global maximum.
 3. pathge: Prune path if it can only yield explanations less or equal than the current _path_ maximum.
 4. pathg: Prune path if it can only yield explanations less than the current _path_ maximum.
+5. off: Don't prune branches. _Warning:_ this can result in large numbers of results and long computation times.
 
 You can change the path pruning policy by passing it as a parameter.
 

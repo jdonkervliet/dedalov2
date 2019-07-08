@@ -71,9 +71,16 @@ def prune_multi_pruner(pruners: Collection[PathPruner], examples: Examples) -> P
     return p
 
 
+def no_prune(pruners: Collection[PathPruner], examples: Examples) -> PathPruner:
+    def p(p: Path) -> bool:
+        return False
+    return p
+
+
 PATH_PRUNER_NAMES = {
     "maxge": prune_max_score_greater_equal,
     "maxg": prune_max_score_greater,
     "pathge": prune_max_path_score_greater_equal,
     "pathg": prune_max_path_score_greater,
+    "off": no_prune,
 }
