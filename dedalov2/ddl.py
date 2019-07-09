@@ -188,7 +188,7 @@ if __name__ == "__main__":
     parser.add_argument("--groupid", type=int, help="The positive examples group number.")
     parser.add_argument("--truncate", "-t", type=int, help="Selects the first x positive and negative examples. The resulting input has size 2x.")
     parser.add_argument("--balance", "-b", action="store_true", help="Makes sure that the number of positive examples equals the number of negative examples. \
-        Is performed after the _truncate_ option.")
+        This is performed after truncate.")
 
     parser.add_argument("--heuristic", type=str, choices=HEURISTIC_NAMES, default="entropy", help="The search heuristic to use.")
 
