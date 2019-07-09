@@ -69,8 +69,8 @@ def explain(hdt_file: str, example_file: str, heuristic: str = "entropy", groupi
     :type prefix: str, optional
     :param blacklist: The location of a text file with predicate URIs (one per line) that Dedalov2 must ignore, defaults to None
     :type blacklist: str, optional
-    :param truncate: If this value is larger than 0, both the number positive examples (URIs from the given group id) and the number of negative examples \
-        (URIs from all other groups) are limited to this number, defaults to 0
+    :param truncate: If this value is larger than 0, both the number of positive examples (URIs from the given group id) and the number of negative examples \
+        (URIs from all other groups) are truncated to this amount, defaults to 0
     :type truncate: int, optional
     :param balance: Discard examples such that that the number of positive and negative examples are equal, defaults to True
     :type balance: bool, optional

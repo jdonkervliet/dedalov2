@@ -1,10 +1,8 @@
-.. dedalov2 documentation master file, created by
-   sphinx-quickstart on Tue Jul  9 13:41:48 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to dedalov2's documentation!
 ====================================
+
+.. automodule:: dedalov2.ddl
+    :members:
 
 .. toctree::
    :maxdepth: 2
