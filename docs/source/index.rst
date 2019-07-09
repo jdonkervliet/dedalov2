@@ -8,7 +8,7 @@ Welcome to dedalov2's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   features
 
 Indices and tables
 ==================
