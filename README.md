@@ -52,7 +52,8 @@ http://dbpedia.org/property/wikilink -| http://dbpedia.org/resource/Rik_Mayall
 http://dbpedia.org/ontology/label -| http://dbpedia.org/resource/Polar_Music
 ```
 
-[Using URI prefixes](#using-uri-prefixes) makes the output look better.
+These URIs are long and difficult to read.
+Read [the docs](https://dedalov2.readthedocs.io/en/latest/features.html#using-uri-prefixes) to learn how to make the output look better.
 
 ## Installation
 
