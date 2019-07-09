@@ -51,12 +51,46 @@ def mem_limit_exceeded(process: psutil.Process, memlimit: float) -> Tuple[bool, 
 
 
 def explain(hdt_file: str, example_file: str, heuristic: str = "entropy", groupid: int = None, prefix: str = None,
-            blacklist: str = None, truncate: int = 0, balance: bool = True, prune: str = "global-less-equal",
-            mem_profile: bool = False, **kwargs) -> Iterator[Explanation]:
-    """Search for an explanation given a file of URIs and the groups they belong to.
+            blacklist: str = None, truncate: int = 0, balance: bool = True, prune: str = "gle",
+            mem_profile: bool = False, runtime: float = math.inf, rounds: float = math.inf,
+            complete: int = 0, minimum_score: float = math.inf, memlimit: float = math.inf) -> Iterator[Explanation]:
+    """Explain why a group of URIs belong together using Semantic Web technology.
     
-    Arguments:
-        args -- Arguments passed by argparse.
+    :param hdt_file: The location of the HDT file to search for explanations. Instead of traversing the LOD-cloud, Dedadov2 offers increased performance in \
+        exchange for using a preconstructed file containing the linked data. HDT is a space-efficiant storage format for linked data.
+    :type hdt_file: str
+    :param example_file: The location of the text file with input examples and their groups.
+    :type example_file: str
+    :param heuristic: The search heuristic that determines which path should be explored next, defaults to "entropy"
+    :type heuristic: str, optional
+    :param groupid: The id of the group that should be explained, defaults to None
+    :type groupid: int, optional
+    :param prefix: The location of a tsv-file with URI prefixes. This makes printed URIs easier to read, defaults to None
+    :type prefix: str, optional
+    :param blacklist: The location of a text file with predicate URIs (one per line) that Dedalov2 must ignore, defaults to None
+    :type blacklist: str, optional
+    :param truncate: If this value is larger than 0, both the number positive examples (URIs from the given group id) and the number of negative examples \
+        (URIs from all other groups) are limited to this number, defaults to 0
+    :type truncate: int, optional
+    :param balance: Discard examples such that that the number of positive and negative examples are equal, defaults to True
+    :type balance: bool, optional
+    :param prune: The path pruning policy to use, defaults to "gle"
+    :type prune: str, optional
+    :param mem_profile: If set to True, occassionaly log memory usage data, defaults to False
+    :type mem_profile: bool, optional
+    :param runtime: The mamimum allowed runtime. Stop searching after this time, defaults to math.inf
+    :type runtime: float, optional
+    :param rounds: Stop searching after this number of rounds. Every round, one path is explored, defaults to math.inf
+    :type rounds: float, optional
+    :param complete: If larger than 0, stop searching after all explanations with the given path length have been found. \
+        an be used to implement complete search to limited depth, defaults to 0
+    :type complete: int, optional
+    :param minimum_score: If equal or greater to zero, only return explanations with a score greater or equal to the given value, defaults to -1
+    :type minimum_score: float, optional
+    :param memlimit: Stop searching if the program uses more than the given amount of memory in bytes. Can help prevent MemoryErrors, defaults to math.inf
+    :type memlimit: float, optional
+    :return: All explanations that meet the given requirements
+    :rtype: Iterator[Explanation]
     """
     local_hdt.init(hdt_file)
 
@@ -69,24 +103,15 @@ def explain(hdt_file: str, example_file: str, heuristic: str = "entropy", groupi
 
     pruner = PATH_PRUNER_NAMES[prune](explanation_evaluation.max_fuzzy_f_measure, examples)
     mp: MemoryProfiler = profiler(mem_profile)
-    for explanation in _explain(examples, heur, pruner, mp, blacklist=bl, **kwargs):
+    for explanation in _explain(examples, heur, pruner=pruner, mp=mp, blacklist=bl, runtime=runtime, round=rounds,
+                                complete=complete, minimum_score=minimum_score, memlimit=memlimit):
         yield explanation
 
 
 def _explain(examples: Examples, heuristic: SearchHeuristic = path_evaluation.entropy,
              pruner: PathPruner = path_pruner.gle, mp: MemoryProfiler = profiler(False), runtime: float = math.inf,
              rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0,
-             minimum_score: int = -1, memlimit: float = math.inf) -> Iterator[Explanation]:
-    """Search for an explanations that explains the given examples.
-    
-    Arguments:
-        examples {Examples} -- The examples to explain.
-        runtime {float} -- The maximum allowed runtime.
-    
-    Keyword Arguments:
-        rounds {float} -- The maximum number of rounds the algorithm will run. (default: {math.inf})
-    """
-
+             minimum_score: float = -1, memlimit: float = math.inf) -> Iterator[Explanation]:
     nodes: Collection[Vertex] = [example.vertex for example in examples]
 
     paths: Dict[Path, Path] = dict()
@@ -151,19 +176,6 @@ def _print_progress(number_of_nodes: int, current_node_index: int, round_number:
 
 def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path, Path], end_time: float,
                           examples: Examples, blacklist: Blacklist = None) -> Set[Explanation]:
-    """Follow the outgoing links of a single vertex and create new paths and explanations based on these extensions.
-    
-    Arguments:
-        document -- HDT document.
-        node {str} -- A URI / vertex in a knowledge graph.
-        best_path {Path} -- The best path. Leads to this node.
-        paths {dict} -- A dictionary of paths. This single hashmap is updated inside this function. Keeps track of all explored paths.
-        explanations {set} -- A set of explanations. This single set is updated inside this function. Keeps track of all explored explanations.
-        end_time {float} -- A wall-time value that indicates when to abort iterating over outgonig nodes.
-    
-    Returns:
-        int -- The number of new explanations created. This value may include duplicates.
-    """
     new_explanations: Set[Explanation] = set()
     triples, k = local_hdt.document().search_triples_ids(node.s_id, 0, 0)
     for s_id, p_id, o_id in triples:
