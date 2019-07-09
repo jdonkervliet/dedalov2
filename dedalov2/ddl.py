@@ -70,15 +70,10 @@ def explain(hdt_file: str, example_file: str, heuristic: str = "entropy", groupi
     examples = Examples.fromCSV(example_file, groupid=groupid, truncate=truncate, balance=balance)
     print_examples(examples)
 
-    pruners: List[PathPruner] = []
-    if prune in PATH_PRUNER_NAMES:
-        pruners.append(PATH_PRUNER_NAMES[prune](explanation_evaluation.max_fuzzy_f_measure, examples))
-        pruner = path_pruner.prune_multi_pruner(pruners, examples)
-        mp: MemoryProfiler = profiler(mem_profile)
-        for explanation in _explain(examples, heuristic, pruner, mp, blacklist=bl, **kwargs):
-            yield explanation
-    else:
-        LOG.error("Path pruner '{}' does not exist.".format(prune))
+    pruner = PATH_PRUNER_NAMES[prune](explanation_evaluation.max_fuzzy_f_measure, examples)
+    mp: MemoryProfiler = profiler(mem_profile)
+    for explanation in _explain(examples, heuristic, pruner, mp, blacklist=bl, **kwargs):
+        yield explanation
 
 
 def _explain(examples: Examples, heuristic: str,
@@ -208,8 +203,7 @@ if __name__ == "__main__":
     parser.add_argument("--prefix", type=str, help="File containing URI prefixes. Two columns [abbrv prefix] separated by whitespace.")
     parser.add_argument("--blacklist", type=str, help="File containing blacklisted URIs. The program does not follow these links.")
 
-    parser.add_argument("--prune", "-p", type=str, choices=PATH_PRUNER_NAMES, default="global-less-equal", help="How aggressively to prune the search space. \
-        Higher values indicate more pruning.")
+    parser.add_argument("--prune", "-p", type=str, choices=PATH_PRUNER_NAMES, default="gle", help="Selects path-prune policy.")
     parser.add_argument("--minimum_score", type=float, default=-1, help="Explanations with scores less or equal to given value are not printed.")
 
     parser.add_argument("--mem-profile", action="store_true", help="Occassionally log memory usage. Can help with finding memory leaks.")

@@ -78,9 +78,9 @@ def no_prune(pruners: Collection[PathPruner], examples: Examples) -> PathPruner:
 
 
 PATH_PRUNER_NAMES = {
-    "global-less": prune_max_score_greater_equal,
-    "global-less-equal": prune_max_score_greater,
-    "path-less": prune_max_path_score_greater_equal,
-    "path-less-equal": prune_max_path_score_greater,
+    "gle": prune_max_score_greater_equal,
+    "gl": prune_max_score_greater,
+    "ple": prune_max_path_score_greater_equal,
+    "pl": prune_max_path_score_greater,
     "off": no_prune,
 }
