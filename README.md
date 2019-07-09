@@ -120,7 +120,7 @@ dbpedia2:wikilink -| dbpedia:Rik_Mayall
 dbpo:label -| dbpedia:Polar_Music
 ```
 
-Where `prefix.txt` looks like:
+Where `prefix.txt` is a tab-separated file that looks like:
 
 ```
 madsrdf	http://www.loc.gov/mads/rdf/v1#
