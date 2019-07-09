@@ -7,7 +7,7 @@ import logging
 import math
 import os
 import time
-from typing import Dict, Collection, Iterator, List, Optional, Set, Tuple
+from typing import Dict, Collection, Iterator, Optional, Set, Tuple
 
 import psutil
 
@@ -22,7 +22,7 @@ from .explanation import Explanation
 from .knowledge_graph import Predicate, Vertex
 from .memory_profiler import MemoryProfiler, profiler
 from .path import Path
-from .path_evaluation import HEURISTIC_NAMES
+from .path_evaluation import SearchHeuristic, HEURISTIC_NAMES
 from .path_pruner import PathPruner, PATH_PRUNER_NAMES
 
 
@@ -32,9 +32,6 @@ def strict_handler(exception):
 
 codecs.register_error("strict", strict_handler)
 LOG = logging.getLogger('dedalov2.ddl')
-
-def validate_search_heuristic(heuristic: str) -> None:
-    path_evaluation.get_heuristic_from_string(heuristic)
 
 
 def print_examples(examples: Examples) -> None:
@@ -65,19 +62,19 @@ def explain(hdt_file: str, example_file: str, heuristic: str = "entropy", groupi
 
     urishortener.setPrefixMapFromFile(prefix)
     bl = Blacklist.fromFile(blacklist)
-    validate_search_heuristic(heuristic)
+    heur: SearchHeuristic = HEURISTIC_NAMES[heuristic]
 
     examples = Examples.fromCSV(example_file, groupid=groupid, truncate=truncate, balance=balance)
     print_examples(examples)
 
     pruner = PATH_PRUNER_NAMES[prune](explanation_evaluation.max_fuzzy_f_measure, examples)
     mp: MemoryProfiler = profiler(mem_profile)
-    for explanation in _explain(examples, heuristic, pruner, mp, blacklist=bl, **kwargs):
+    for explanation in _explain(examples, heur, pruner, mp, blacklist=bl, **kwargs):
         yield explanation
 
 
-def _explain(examples: Examples, heuristic: str,
-             pruner: PathPruner, mp: MemoryProfiler, runtime: float = math.inf,
+def _explain(examples: Examples, heuristic: SearchHeuristic = path_evaluation.entropy,
+             pruner: PathPruner = path_pruner.gle, mp: MemoryProfiler = profiler(False), runtime: float = math.inf,
              rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0,
              minimum_score: int = -1, memlimit: float = math.inf) -> Iterator[Explanation]:
     """Search for an explanations that explains the given examples.
@@ -193,7 +190,7 @@ if __name__ == "__main__":
     parser.add_argument("--balance", "-b", action="store_true", help="Makes sure that the number of positive examples equals the number of negative examples. \
         Is performed after the _truncate_ option.")
 
-    parser.add_argument("--heuristic", type=str, choices=HEURISTIC_NAMES, default="bfs", help="The search heuristic to use.")
+    parser.add_argument("--heuristic", type=str, choices=HEURISTIC_NAMES, default="entropy", help="The search heuristic to use.")
 
     parser.add_argument("--complete", "-c", type=int, default=0, help="Perform a complete search of all paths up to given length.")
     parser.add_argument("--runtime", type=float, default=math.inf, help="Number of seconds the program is allowed to run.")

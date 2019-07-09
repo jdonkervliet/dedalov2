@@ -1,6 +1,6 @@
 
 import logging
-from typing import Callable, Collection, Dict
+from typing import Callable, Dict
 
 from .example import Examples
 from .path import Path
@@ -10,7 +10,7 @@ PathPruner = Callable[[Path], bool]
 LOG = logging.getLogger('dedalov2.path_pruner')
 
 
-def prune_max_path_score_greater_equal(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
+def ple(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
     def p(p: Path) -> bool:
         new_max = explanation_evaluation_func(p, examples)
         best_found = p.max_score_found_on_path
@@ -21,7 +21,7 @@ def prune_max_path_score_greater_equal(explanation_evaluation_func: Callable[[Pa
     return p
 
 
-def prune_max_path_score_greater(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
+def pl(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
     def p(p: Path) -> bool:
         new_max = explanation_evaluation_func(p, examples)
         best_found = p.max_score_found_on_path
@@ -32,7 +32,7 @@ def prune_max_path_score_greater(explanation_evaluation_func: Callable[[Path, Ex
     return p
 
 
-def prune_max_score_greater_equal(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
+def gle(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
     max_score: float = 0.0
 
     def p(p: Path) -> bool:
@@ -47,7 +47,7 @@ def prune_max_score_greater_equal(explanation_evaluation_func: Callable[[Path, E
     return p
 
 
-def prune_max_score_greater(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
+def gl(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
     max_score: float = 0.0
 
     def p(p: Path) -> bool:
@@ -62,7 +62,7 @@ def prune_max_score_greater(explanation_evaluation_func: Callable[[Path, Example
     return p
 
 
-def no_prune(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
+def off(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
     def p(p: Path) -> bool:
         return False
     return p
@@ -72,9 +72,9 @@ PathPrunerFactory = Callable[[Callable[[Path, Examples], float], Examples], Path
 
 
 PATH_PRUNER_NAMES: Dict[str, PathPrunerFactory] = {
-    "gle": prune_max_score_greater_equal,
-    "gl": prune_max_score_greater,
-    "ple": prune_max_path_score_greater_equal,
-    "pl": prune_max_path_score_greater,
-    "off": no_prune,
+    "gle": gle,
+    "gl": gl,
+    "ple": ple,
+    "pl": pl,
+    "off": off,
 }

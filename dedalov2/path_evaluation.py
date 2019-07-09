@@ -8,9 +8,10 @@ from .path import Path
 from .path_pruner import PathPruner
 
 LOG = logging.getLogger('dedalov2.path_evaluation')
+SearchHeuristic = Callable[[Path, Examples], float]
 
 
-def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, pruner: PathPruner, max_length: float = float('inf')) -> Optional[Path]:
+def find_best_path(heuristic: SearchHeuristic, paths: Dict[Path, Path], examples: Examples, pruner: PathPruner, max_length: float = float('inf')) -> Optional[Path]:
     """Get the best path from a collection of paths.
     
     Arguments:
@@ -23,7 +24,6 @@ def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, 
     LOG.debug("EVALUATING {} POSSIBLE PATHS".format(len(paths)))
     score = float('-inf')
     res: Optional[Path] = None
-    heuristic_search_func = get_heuristic_from_string(heuristic)
     paths_to_delete: Set[Path] = set()
     pruned: int = 0
     too_long: int = 0
@@ -37,7 +37,7 @@ def find_best_path(heuristic: str, paths: Dict[Path, Path], examples: Examples, 
             pruned += 1
             continue
 
-        new_score = heuristic_search_func(path, examples)
+        new_score = heuristic(path, examples)
         if new_score > score:
             score = new_score
             res = path
@@ -94,12 +94,7 @@ def longest_path(p: Path, examples: Examples) -> float:
 
 
 HEURISTIC_NAMES: Dict[str, Callable[[Path, Examples], float]] = {
-    "bfs": shortest_path,
+    "spf": shortest_path,
     "entropy": entropy,
     "lpf": longest_path,
 }
-
-
-def get_heuristic_from_string(name: str) -> Callable[[Path, Examples], float]:
-    assert name in HEURISTIC_NAMES, "Unknown search heuristic: {}.".format(name)
-    return HEURISTIC_NAMES[name]
