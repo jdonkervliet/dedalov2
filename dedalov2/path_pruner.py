@@ -1,6 +1,6 @@
 
 import logging
-from typing import Callable, Collection
+from typing import Callable, Collection, Dict
 
 from .example import Examples
 from .path import Path
@@ -62,22 +62,16 @@ def prune_max_score_greater(explanation_evaluation_func: Callable[[Path, Example
     return p
 
 
-def prune_multi_pruner(pruners: Collection[PathPruner], examples: Examples) -> PathPruner:
-    def p(p: Path) -> bool:
-        for pruner in pruners:
-            if pruner(p):
-                return True
-        return False
-    return p
-
-
-def no_prune(pruners: Collection[PathPruner], examples: Examples) -> PathPruner:
+def no_prune(explanation_evaluation_func: Callable[[Path, Examples], float], examples: Examples) -> PathPruner:
     def p(p: Path) -> bool:
         return False
     return p
 
 
-PATH_PRUNER_NAMES = {
+PathPrunerFactory = Callable[[Callable[[Path, Examples], float], Examples], PathPruner]
+
+
+PATH_PRUNER_NAMES: Dict[str, PathPrunerFactory] = {
     "gle": prune_max_score_greater_equal,
     "gl": prune_max_score_greater,
     "ple": prune_max_path_score_greater_equal,
