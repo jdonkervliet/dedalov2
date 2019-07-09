@@ -1,6 +1,11 @@
 
 import os
+import logging
 from typing import Optional, Set
+
+from .knowledge_graph import Predicate
+
+LOG = logging.getLogger('dedalov2.blacklist')
 
 
 class Blacklist:
@@ -14,14 +19,17 @@ class Blacklist:
             with open(filename) as fin:
                 lines = map(lambda line: line.strip(), fin.readline())
                 for line in lines:
-                    bl.addToBlacklist(line)
+                    try:
+                        bl.addToBlacklist(Predicate.fromString(line))
+                    except ValueError as e:
+                        LOG.warning(e)
         return bl
 
     def __init__(self):
-        self.blacklisted_items: Set[str] = set()
+        self.blacklisted_items: Set[Predicate] = set()
 
-    def addToBlacklist(self, item: str) -> None:
+    def addToBlacklist(self, item: Predicate) -> None:
         self.blacklisted_items.add(item)
 
-    def isBlacklisted(self, string: str) -> bool:
+    def isBlacklisted(self, string: Predicate) -> bool:
         return string.strip() in self.blacklisted_items

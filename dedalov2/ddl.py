@@ -103,13 +103,13 @@ def explain(hdt_file: str, example_file: str, heuristic: str = "entropy", groupi
 
     pruner = PATH_PRUNER_NAMES[prune](explanation_evaluation.max_fuzzy_f_measure, examples)
     mp: MemoryProfiler = profiler(mem_profile)
-    for explanation in _explain(examples, heur, pruner=pruner, mp=mp, blacklist=bl, runtime=runtime, round=rounds,
+    for explanation in _explain(examples, pruner, heuristic=heur, mp=mp, blacklist=bl, runtime=runtime, rounds=rounds,
                                 complete=complete, minimum_score=minimum_score, memlimit=memlimit):
         yield explanation
 
 
-def _explain(examples: Examples, heuristic: SearchHeuristic = path_evaluation.entropy,
-             pruner: PathPruner = path_pruner.gle, mp: MemoryProfiler = profiler(False), runtime: float = math.inf,
+def _explain(examples: Examples, pruner: PathPruner, heuristic: SearchHeuristic = path_evaluation.entropy,
+             mp: MemoryProfiler = profiler(False), runtime: float = math.inf,
              rounds: float = math.inf, blacklist: Blacklist = None, complete: int = 0,
              minimum_score: float = -1, memlimit: float = math.inf) -> Iterator[Explanation]:
     nodes: Collection[Vertex] = [example.vertex for example in examples]
@@ -183,7 +183,7 @@ def follow_outgoing_links(node: Vertex, best_path: Path, paths: Dict[Path, Path]
         p = Predicate(p_id)
         o = Vertex.fromObjectId(o_id)
         # Create new path.
-        if blacklist is not None and blacklist.isBlacklisted(str(p)):
+        if blacklist is not None and blacklist.isBlacklisted(p):
             continue
         path = best_path.extend(paths, s, p, o)
         exp = Explanation(path, o)
