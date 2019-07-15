@@ -6,6 +6,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="dedalov2",
+    python_requires='>=3.7.2',
     version="0.0.1",
     author="Jesse Donkervliet",
     author_email="j.donkervliet+dedalo@gmail.com",
