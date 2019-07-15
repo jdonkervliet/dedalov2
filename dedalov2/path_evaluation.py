@@ -50,6 +50,19 @@ def entropy(p: Path, examples: Examples) -> float:
         res -= frac * math.log10(frac)
     return res
 
+def entropy_corrected(p: Path, examples: Examples) -> float:
+    res: float = 0
+    for obj in p.get_end_points():
+        frac: float = 0.0
+        starting_points_to_obj = p.get_starting_points_connected_to_endpoint(obj)
+        for starting_point in starting_points_to_obj:
+            numexamples = p.get_end_points_connected_to_example(starting_point)
+            frac += 1 / (len(numexamples) * len(starting_points_to_obj))
+        assert frac >= 0
+        assert frac <= 1
+        res -= frac * math.log10(frac)
+    return res
+
 
 def shortest_path(p: Path, examples: Examples) -> float:
     return -float(len(p))
@@ -63,4 +76,5 @@ HEURISTIC_NAMES: Dict[str, Callable[[Path, Examples], float]] = {
     "spf": shortest_path,
     "entropy": entropy,
     "lpf": longest_path,
+    "ec": entropy_corrected,
 }

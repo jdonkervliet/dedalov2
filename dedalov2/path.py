@@ -46,6 +46,9 @@ class Path:
     def get_end_points(self) -> Set[Vertex]:
         return set(self.end_to_starts.keys())
 
+    def get_end_points_connected_to_example(self, e: Example) -> Set[Vertex]:
+        return self.start_to_ends.get(e, set())
+
     def __len__(self):
         if self.edges is None:
             return 0
