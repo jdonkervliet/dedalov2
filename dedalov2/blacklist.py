@@ -31,5 +31,5 @@ class Blacklist:
     def addToBlacklist(self, item: Predicate) -> None:
         self.blacklisted_items.add(item)
 
-    def isBlacklisted(self, string: Predicate) -> bool:
-        return string.strip() in self.blacklisted_items
+    def isBlacklisted(self, p: Predicate) -> bool:
+        return p in self.blacklisted_items
